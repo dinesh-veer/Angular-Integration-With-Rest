@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Configuration - Angular REST Integration</title>
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+<header class="topbar">
+    <div class="brand">
+        Angular REST Integration
+    </div>
+
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="getting-started.html">Getting Started</a>
+        <a href="architecture.html">Architecture</a>
+        <a href="rest-service.html">REST Service</a>
+        <a href="configuration.html" class="active">Configuration</a>
+        <a href="testing.html">Testing</a>
+    </nav>
+</header>
+
+<div class="layout">
+
+    <aside class="sidebar">
+        <h3>Configuration</h3>
+
+        <a href="#angular-json">angular.json</a>
+        <a href="#app-config">app.config.ts</a>
+        <a href="#zone-polyfills">Zone.js Polyfills</a>
+        <a href="#tsconfig">TypeScript Config</a>
+        <a href="#package-json">package.json</a>
+    </aside>
+
+    <main class="content">
+
+        <section class="hero">
+            <h1>Configuration Reference</h1>
+
+            <p>
+                Complete reference for workspace build settings, application providers,
+                compiler options, and runtime polyfills.
+            </p>
+        </section>
+
+        <section id="angular-json">
+            <h2>angular.json Configuration</h2>
+
+            <p>
+                The workspace uses Angular's next-generation <code>@angular/build</code> builders:
+            </p>
+
+            <pre><code>{
+  "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+  "version": 1,
+  "cli": {
+    "packageManager": "npm"
+  },
+  "newProjectRoot": "projects",
+  "projects": {
+    "hello-angular": {
+      "projectType": "application",
+      "schematics": {},
+      "root": "",
+      "sourceRoot": "src",
+      "prefix": "app",
+      "architect": {
+        "build": {
+          "builder": "@angular/build:application",
+          "options": {
+            "browser": "src/main.ts",
+            "tsConfig": "tsconfig.app.json",
+            "polyfills": [
+              "zone.js"
+            ],
+            "assets": [
+              {
+                "glob": "**/*",
+                "input": "public"
+              }
+            ],
+            "styles": [
+              "src/styles.css"
+            ]
+          },
+          "configurations": {
+            "production": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "500kB",
+                  "maximumError": "1MB"
+                }
+              ],
+              "outputHashing": "all"
+            },
+            "development": {
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "serve": {
+          "builder": "@angular/build:dev-server",
+          "configurations": {
+            "production": {
+              "buildTarget": "hello-angular:build:production"
+            },
+            "development": {
+              "buildTarget": "hello-angular:build:development"
+            }
+          },
+          "defaultConfiguration": "development"
+        },
+        "test": {
+          "builder": "@angular/build:unit-test"
+        }
+      }
+    }
+  }
+}</code></pre>
+        </section>
+
+        <section id="app-config">
+            <h2>Application Providers (app.config.ts)</h2>
+
+            <p>
+                In standalone Angular, application-wide services and providers are configured inside <code>src/app/app.config.ts</code>:
+            </p>
+
+            <pre><code>import { ApplicationConfig, provideBrowserGlobalErrorListeners, provideZoneChangeDetection } from '@angular/core';
+import { provideHttpClient } from '@angular/common/http';
+
+export const appConfig: ApplicationConfig = {
+  providers: [
+    provideZoneChangeDetection({ eventCoalescing: true }),
+    provideBrowserGlobalErrorListeners(),
+    provideHttpClient()
+  ]
+};</code></pre>
+
+            <ul>
+                <li><strong><code>provideHttpClient()</code></strong>: Configures Angular's HTTP client without requiring <code>HttpClientModule</code>.</li>
+                <li><strong><code>provideZoneChangeDetection()</code></strong>: Tunes Zone.js change detection with <code>eventCoalescing: true</code> to bundle multiple synchronous DOM events into a single change detection cycle.</li>
+                <li><strong><code>provideBrowserGlobalErrorListeners()</code></strong>: Automatically captures uncaught global errors for enhanced runtime debugging.</li>
+            </ul>
+        </section>
+
+        <section id="zone-polyfills">
+            <h2>Zone.js &amp; Polyfill Management</h2>
+
+            <p>
+                In modern Angular, <code>polyfills.ts</code> is no longer required. Instead, polyfills are declared as an array
+                under <code>options.polyfills</code> in <code>angular.json</code>:
+            </p>
+
+            <pre><code>"polyfills": [
+  "zone.js"
+]</code></pre>
+
+            <p>
+                This ensures that Zone.js is bundled into a dedicated polyfills chunk (e.g., <code>polyfills-LVNOU2XZ.js</code>)
+                loaded before the main application logic executes.
+            </p>
+        </section>
+
+        <section id="tsconfig">
+            <h2>TypeScript Configuration</h2>
+
+            <p>
+                TypeScript compilation is structured using modern project references:
+            </p>
+
+            <ul>
+                <li><code>tsconfig.json</code>: Base compiler options (target: <code>ES2022</code>, module: <code>preserve</code>, strict mode enabled).</li>
+                <li><code>tsconfig.app.json</code>: Compilation rules for application source files (excludes <code>*.spec.ts</code>).</li>
+                <li><code>tsconfig.spec.json</code>: Compilation rules for unit tests (includes <code>vitest/globals</code> type definitions).</li>
+            </ul>
+        </section>
+
+        <section id="package-json">
+            <h2>Scripts &amp; Dependencies (package.json)</h2>
+
+            <pre><code>{
+  "name": "hello-angular",
+  "version": "0.0.0",
+  "scripts": {
+    "ng": "ng",
+    "start": "ng serve",
+    "build": "ng build",
+    "watch": "ng build --watch --configuration development",
+    "test": "ng test --watch=false"
+  },
+  "private": true,
+  "packageManager": "npm@11.6.0"
+}</code></pre>
+        </section>
+
+    </main>
+
+</div>
+
+<footer class="site-footer">
+
+    <div class="footer-content">
+
+        <div class="footer-brand">
+            <h3>Angular REST Integration</h3>
+            <p>
+                A modern Angular 21 project demonstrating REST API integration,
+                reactive RxJS observables, and standalone architecture.
+            </p>
+        </div>
+
+        <div class="footer-links">
+
+            <div>
+                <h4>Documentation</h4>
+
+                <a href="index.html">Home</a>
+                <a href="getting-started.html">Getting Started</a>
+                <a href="architecture.html">Architecture</a>
+                <a href="rest-service.html">REST Service</a>
+                <a href="configuration.html">Configuration</a>
+                <a href="testing.html">Testing</a>
+            </div>
+
+            <div>
+                <h4>Repository</h4>
+
+                <a href="https://github.com/dinesh-veer/Angular-Integration-With-Rest"
+                   target="_blank"
+                   rel="noopener noreferrer">
+                    GitHub
+                </a>
+                <a href="https://github.com/dinesh-veer/Angular-Integration-With-Rest/issues"
+                   target="_blank"
+                   rel="noopener noreferrer">
+                    Issues
+                </a>
+                <a href="https://github.com/dinesh-veer/Angular-Integration-With-Rest/pulls"
+                   target="_blank"
+                   rel="noopener noreferrer">
+                    Pull Requests
+                </a>
+                <a href="https://github.com/dinesh-veer/Angular-Integration-With-Rest/stargazers"
+                   target="_blank"
+                   rel="noopener noreferrer">
+                    Stargazers
+                </a>
+            </div>
+
+            <div>
+                <h4>Author</h4>
+
+                <a href="https://github.com/dinesh-veer"
+                   target="_blank"
+                   rel="noopener noreferrer">
+                    Dinesh Veer
+                </a>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="footer-bottom">
+
+        <p>
+            © 2026 Dinesh Veer. All rights reserved.
+        </p>
+
+        <p>
+            Built with Angular 21 &amp; TypeScript.
+        </p>
+
+    </div>
+
+</footer>
+
+<script src="js/script.js"></script>
+
+</body>
+</html>
+

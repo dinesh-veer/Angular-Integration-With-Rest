@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Testing - Angular REST Integration</title>
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+<header class="topbar">
+    <div class="brand">
+        Angular REST Integration
+    </div>
+
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="getting-started.html">Getting Started</a>
+        <a href="architecture.html">Architecture</a>
+        <a href="rest-service.html">REST Service</a>
+        <a href="configuration.html">Configuration</a>
+        <a href="testing.html" class="active">Testing</a>
+    </nav>
+</header>
+
+<div class="layout">
+
+    <aside class="sidebar">
+        <h3>Testing</h3>
+
+        <a href="#runner">Vitest Runner</a>
+        <a href="#service-tests">Service Tests</a>
+        <a href="#mock-http">HttpTestingController</a>
+        <a href="#component-tests">Component Tests</a>
+        <a href="#execution">Running Tests</a>
+    </aside>
+
+    <main class="content">
+
+        <section class="hero">
+            <h1>Unit Testing with Vitest</h1>
+
+            <p>
+                Learn how unit testing is performed using Angular's modern Vitest builder
+                and how HTTP calls and component views are verified.
+            </p>
+        </section>
+
+        <section id="runner">
+            <h2>The Vitest Runner</h2>
+
+            <p>
+                Modern Angular replaces the legacy Karma test runner with <strong>Vitest</strong> and <strong>JSDOM</strong>.
+                Vitest executes tests in-process with minimal overhead, instantaneous startup times, and zero dependency
+                on launching external Chrome browser binaries.
+            </p>
+        </section>
+
+        <section id="service-tests">
+            <h2>Testing AppServiceService</h2>
+
+            <p>
+                HTTP services are tested using <code>provideHttpClient()</code> and <code>provideHttpClientTesting()</code>:
+            </p>
+
+            <pre><code>import { TestBed } from '@angular/core/testing';
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting, HttpTestingController } from '@angular/common/http/testing';
+import { AppServiceService } from './app-service.service';
+
+describe('AppServiceService', () => {
+  let service: AppServiceService;
+  let httpMock: HttpTestingController;
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      providers: [
+        AppServiceService,
+        provideHttpClient(),
+        provideHttpClientTesting()
+      ]
+    });
+    service = TestBed.inject(AppServiceService);
+    httpMock = TestBed.inject(HttpTestingController);
+  });
+
+  afterEach(() => {
+    httpMock.verify(); // Ensures no dangling or unexpected HTTP requests
+  });
+
+  it('should be created', () => {
+    expect(service).toBeTruthy();
+  });
+
+  it('should get all posts from the REST API', () => {
+    const mockPosts = {
+      posts: [
+        { id: 1, title: 'First Post', content: '&lt;p&gt;Hello&lt;/p&gt;' }
+      ]
+    };
+
+    service.getAll().subscribe((response) => {
+      expect(response).toEqual(mockPosts);
+    });
+
+    const req = httpMock.expectOne('https://public-api.wordpress.com/rest/v1.1/sites/vocon-it.com/posts');
+    expect(req.request.method).toBe('GET');
+    req.flush(mockPosts);
+  });
+});</code></pre>
+        </section>
+
+        <section id="mock-http">
+            <h2>HttpTestingController Workflow</h2>
+
+            <ol>
+                <li>Subscribe to the service method call (<code>service.getAll().subscribe(...)</code>).</li>
+                <li>Intercept the pending request using <code>httpMock.expectOne(expectedUrl)</code>.</li>
+                <li>Assert request characteristics (HTTP method: <code>GET</code>, headers, query params).</li>
+                <li>Complete the request by calling <code>req.flush(mockData)</code> with your mock payload.</li>
+                <li>Verify no extra requests were fired via <code>httpMock.verify()</code>.</li>
+            </ol>
+        </section>
+
+        <section id="component-tests">
+            <h2>Testing AppComponent</h2>
+
+            <p>
+                The standalone component is tested by substituting the real service with a mock Observable:
+            </p>
+
+            <pre><code>import { TestBed } from '@angular/core/testing';
+import { of } from 'rxjs';
+import { AppComponent } from './app.component';
+import { AppServiceService } from './app-service.service';
+
+describe('AppComponent', () => {
+  const mockService = {
+    getAll: () => of({
+      posts: [
+        { title: 'Test Post', content: '&lt;p&gt;Test Content&lt;/p&gt;' }
+      ]
+    })
+  };
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [AppComponent],
+      providers: [
+        { provide: AppServiceService, useValue: mockService }
+      ]
+    }).compileComponents();
+  });
+
+  it('should create the app', () => {
+    const fixture = TestBed.createComponent(AppComponent);
+    const app = fixture.componentInstance;
+    expect(app).toBeTruthy();
+  });
+
+  it('should render title in a h1 tag', async () => {
+    const fixture = TestBed.createComponent(AppComponent);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    const compiled = fixture.nativeElement as HTMLElement;
+    expect(compiled.querySelector('h1')?.textContent).toContain('Blog Posts');
+  });
+
+  it('should display posts returned by service', async () => {
+    const fixture = TestBed.createComponent(AppComponent);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    const compiled = fixture.nativeElement as HTMLElement;
+    expect(compiled.querySelector('li')?.textContent).toContain('Test Post');
+  });
+});</code></pre>
+        </section>
+
+        <section id="execution">
+            <h2>Running Unit Tests</h2>
+
+            <p>Execute the tests via the npm script:</p>
+
+            <pre><code>npm test</code></pre>
+
+            <p>Example terminal output:</p>
+
+            <pre><code>RUN  v4.1.12 /Users/dinesh/workspace/gitCode/Angular-Integration-With-Rest
+
+✓ |hello-angular| src/app/app-service.service.spec.ts (2 tests) 12ms
+✓ |hello-angular| src/app/app.component.spec.ts (4 tests) 40ms
+
+Test Files  2 passed (2)
+     Tests  6 passed (6)
+  Duration  1.1s</code></pre>
+        </section>
+
+    </main>
+
+</div>
+
+<footer class="site-footer">
+
+    <div class="footer-content">
+
+        <div class="footer-brand">
+            <h3>Angular REST Integration</h3>
+            <p>
+                A modern Angular 21 project demonstrating REST API integration,
+                reactive RxJS observables, and standalone architecture.
+            </p>
+        </div>
+
+        <div class="footer-links">
+
+            <div>
+                <h4>Documentation</h4>
+
+                <a href="index.html">Home</a>
+                <a href="getting-started.html">Getting Started</a>
+                <a href="architecture.html">Architecture</a>
+                <a href="rest-service.html">REST Service</a>
+                <a href="configuration.html">Configuration</a>
+                <a href="testing.html">Testing</a>
+            </div>
+
+            <div>
+                <h4>Repository</h4>
+
+                <a href="https://github.com/dinesh-veer/Angular-Integration-With-Rest"
+                   target="_blank"
+                   rel="noopener noreferrer">
+                    GitHub
+                </a>
+                <a href="https://github.com/dinesh-veer/Angular-Integration-With-Rest/issues"
+                   target="_blank"
+                   rel="noopener noreferrer">
+                    Issues
+                </a>
+                <a href="https://github.com/dinesh-veer/Angular-Integration-With-Rest/pulls"
+                   target="_blank"
+                   rel="noopener noreferrer">
+                    Pull Requests
+                </a>
+                <a href="https://github.com/dinesh-veer/Angular-Integration-With-Rest/stargazers"
+                   target="_blank"
+                   rel="noopener noreferrer">
+                    Stargazers
+                </a>
+            </div>
+
+            <div>
+                <h4>Author</h4>
+
+                <a href="https://github.com/dinesh-veer"
+                   target="_blank"
+                   rel="noopener noreferrer">
+                    Dinesh Veer
+                </a>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="footer-bottom">
+
+        <p>
+            © 2026 Dinesh Veer. All rights reserved.
+        </p>
+
+        <p>
+            Built with Angular 21 &amp; TypeScript.
+        </p>
+
+    </div>
+
+</footer>
+
+<script src="js/script.js"></script>
+
+</body>
+</html>
+

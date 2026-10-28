@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Architecture - Angular REST Integration</title>
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+<header class="topbar">
+    <div class="brand">
+        Angular REST Integration
+    </div>
+
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="getting-started.html">Getting Started</a>
+        <a href="architecture.html" class="active">Architecture</a>
+        <a href="rest-service.html">REST Service</a>
+        <a href="configuration.html">Configuration</a>
+        <a href="testing.html">Testing</a>
+    </nav>
+</header>
+
+<div class="layout">
+
+    <aside class="sidebar">
+        <h3>Architecture</h3>
+
+        <a href="#overview">Overview</a>
+        <a href="#layers">Layered Architecture</a>
+        <a href="#standalone">Standalone Pattern</a>
+        <a href="#change-detection">Change Detection</a>
+        <a href="#comparison">Legacy vs Modern</a>
+    </aside>
+
+    <main class="content">
+
+        <section class="hero">
+            <h1>Architecture &amp; Design Patterns</h1>
+
+            <p>
+                Understand how Angular REST Integration is structured, how standalone components work,
+                and how asynchronous change detection guarantees responsive view updates.
+            </p>
+        </section>
+
+        <section id="overview">
+            <h2>Overview</h2>
+
+            <p>
+                The project follows Angular's single-responsibility design principles, decoupling data retrieval,
+                state management, and UI rendering into distinct layers:
+            </p>
+
+            <pre><code>┌────────────────────────────────────────────────────────┐
+│                      UI View                           │
+│   (app.component.html - *ngIf, *ngFor, [innerHTML])    │
+└───────────────────────────▲────────────────────────────┘
+                            │ (Template Bindings)
+┌───────────────────────────┴────────────────────────────┐
+│                  Component Controller                  │
+│   (AppComponent - State, Events, ChangeDetectorRef)    │
+└───────────────────────────▲────────────────────────────┘
+                            │ (RxJS Observable Stream)
+┌───────────────────────────┴────────────────────────────┐
+│                      Service Layer                     │
+│   (AppServiceService - HttpClient, REST URL, map())    │
+└───────────────────────────▲────────────────────────────┘
+                            │ (HTTP GET Request)
+┌───────────────────────────┴────────────────────────────┐
+│               External REST API Server                 │
+│   (WordPress Public REST API v1.1)                     │
+└────────────────────────────────────────────────────────┘</code></pre>
+        </section>
+
+        <section id="layers">
+            <h2>Layered Architecture</h2>
+
+            <h3>1. Service Layer (<code>AppServiceService</code>)</h3>
+            <p>
+                The service is decorated with <code>@Injectable({ providedIn: 'root' })</code>, making it a singleton
+                accessible application-wide. It injects Angular's modern <code>HttpClient</code> and provides methods
+                that return strongly typed RxJS <code>Observable</code> instances.
+            </p>
+
+            <h3>2. Component Controller (<code>AppComponent</code>)</h3>
+            <p>
+                Implemented as a standalone component using <code>standalone: true</code>. It subscribes to the service
+                observable in its <code>ngOnInit</code> lifecycle hook, stores received items in local state, and manages
+                user interactions (such as post clicks).
+            </p>
+
+            <h3>3. Presentation Layer (<code>app.component.html</code>)</h3>
+            <p>
+                Uses declarative directives (<code>*ngIf</code> for loading states, <code>*ngFor</code> for listing items,
+                and <code>[innerHTML]</code> for rendering WordPress post titles and HTML articles).
+            </p>
+        </section>
+
+        <section id="standalone">
+            <h2>Standalone Component Pattern</h2>
+
+            <p>
+                Traditional Angular projects required every component to be declared inside an <code>NgModule</code> (typically <code>AppModule</code>).
+                Modern Angular replaces this with <strong>Standalone Components</strong>:
+            </p>
+
+            <pre><code>// main.ts
+import { bootstrapApplication } from '@angular/platform-browser';
+import { appConfig } from './app/app.config';
+import { AppComponent } from './app/app.component';
+
+bootstrapApplication(AppComponent, appConfig)
+  .catch((err) => console.error(err));</code></pre>
+
+            <p>
+                Dependencies are imported directly into the component decorator via <code>imports: [CommonModule]</code>.
+                Global providers such as <code>provideHttpClient()</code> and <code>provideZoneChangeDetection()</code>
+                are supplied in <code>appConfig</code> (an <code>ApplicationConfig</code> object).
+            </p>
+        </section>
+
+        <section id="change-detection">
+            <h2>Change Detection Flow</h2>
+
+            <p>
+                When data is fetched asynchronously over the network, Angular must be informed that the component state has changed
+                so it can re-render the template:
+            </p>
+
+            <pre><code>1. HTTP Request Triggered
+   appService.getAll() initiates GET request via HttpClient
+
+2. Asynchronous Delay (~1 second)
+   Network roundtrip to WordPress API endpoint
+
+3. Observable Emits Data
+   subscribe({ next: (restItems) => { ... } }) callback executes
+
+4. State Mutation & Change Notification
+   this.restItems = restItems;
+   this.cdr.markForCheck(); // Explicitly schedules change detection pass
+
+5. Zone.js / Scheduler Tick
+   Angular reconciles the virtual DOM with the real DOM
+
+6. UI Updates
+   "Loading ....." div disappears, post list renders instantly</code></pre>
+
+            <p>
+                By combining <code>zone.js</code> with explicit <code>this.cdr.markForCheck()</code>, the component functions reliably
+                in both traditional zone-based execution and modern zoneless Angular environments.
+            </p>
+        </section>
+
+        <section id="comparison">
+            <h2>Legacy vs. Modern Angular Architecture</h2>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Concept</th>
+                        <th>Traditional Angular (v6)</th>
+                        <th>Modern Angular (v21)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Module Boundary</strong></td>
+                        <td>Mandatory <code>@NgModule({ declarations: [...] })</code></td>
+                        <td><code>standalone: true</code> directly imports dependencies</td>
+                    </tr>
+                    <tr>
+                        <td><strong>HTTP Setup</strong></td>
+                        <td><code>HttpClientModule</code> in <code>imports: [...]</code></td>
+                        <td><code>provideHttpClient()</code> in <code>ApplicationConfig</code></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Change Detection</strong></td>
+                        <td>Unconfigurable Zone.js monkey patching</td>
+                        <td>Configurable Zone.js with coalescing / Zoneless ready</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Build Tool</strong></td>
+                        <td>Webpack Browser Builder</td>
+                        <td>Vite + esbuild Application Builder</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Unit Testing</strong></td>
+                        <td>Karma + Jasmine + Headless Chrome</td>
+                        <td>Vitest + JSDOM</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+    </main>
+
+</div>
+
+<footer class="site-footer">
+
+    <div class="footer-content">
+
+        <div class="footer-brand">
+            <h3>Angular REST Integration</h3>
+            <p>
+                A modern Angular 21 project demonstrating REST API integration,
+                reactive RxJS observables, and standalone architecture.
+            </p>
+        </div>
+
+        <div class="footer-links">
+
+            <div>
+                <h4>Documentation</h4>
+
+                <a href="index.html">Home</a>
+                <a href="getting-started.html">Getting Started</a>
+                <a href="architecture.html">Architecture</a>
+                <a href="rest-service.html">REST Service</a>
+                <a href="configuration.html">Configuration</a>
+                <a href="testing.html">Testing</a>
+            </div>
+
+            <div>
+                <h4>Repository</h4>
+
+                <a href="https://github.com/dinesh-veer/Angular-Integration-With-Rest"
+                   target="_blank"
+                   rel="noopener noreferrer">
+                    GitHub
+                </a>
+                <a href="https://github.com/dinesh-veer/Angular-Integration-With-Rest/issues"
+                   target="_blank"
+                   rel="noopener noreferrer">
+                    Issues
+                </a>
+                <a href="https://github.com/dinesh-veer/Angular-Integration-With-Rest/pulls"
+                   target="_blank"
+                   rel="noopener noreferrer">
+                    Pull Requests
+                </a>
+                <a href="https://github.com/dinesh-veer/Angular-Integration-With-Rest/stargazers"
+                   target="_blank"
+                   rel="noopener noreferrer">
+                    Stargazers
+                </a>
+            </div>
+
+            <div>
+                <h4>Author</h4>
+
+                <a href="https://github.com/dinesh-veer"
+                   target="_blank"
+                   rel="noopener noreferrer">
+                    Dinesh Veer
+                </a>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="footer-bottom">
+
+        <p>
+            © 2026 Dinesh Veer. All rights reserved.
+        </p>
+
+        <p>
+            Built with Angular 21 &amp; TypeScript.
+        </p>
+
+    </div>
+
+</footer>
+
+<script src="js/script.js"></script>
+
+</body>
+</html>
+

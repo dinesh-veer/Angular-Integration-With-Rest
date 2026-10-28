@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Getting Started - Angular REST Integration</title>
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+<header class="topbar">
+    <div class="brand">
+        Angular REST Integration
+    </div>
+
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="getting-started.html" class="active">Getting Started</a>
+        <a href="architecture.html">Architecture</a>
+        <a href="rest-service.html">REST Service</a>
+        <a href="configuration.html">Configuration</a>
+        <a href="testing.html">Testing</a>
+    </nav>
+</header>
+
+<div class="layout">
+
+    <aside class="sidebar">
+        <h3>Getting Started</h3>
+
+        <a href="#prerequisites">Prerequisites</a>
+        <a href="#clone">Clone Repository</a>
+        <a href="#install">Install Dependencies</a>
+        <a href="#dev-server">Development Server</a>
+        <a href="#build">Production Build</a>
+        <a href="#preview">Preview Build</a>
+        <a href="#tests">Run Tests</a>
+    </aside>
+
+    <main class="content">
+
+        <section class="hero">
+            <h1>Getting Started</h1>
+
+            <p>
+                Learn how to set up your local development environment, install project dependencies,
+                start the Angular dev server, and build for production.
+            </p>
+        </section>
+
+        <section id="prerequisites">
+            <h2>Prerequisites</h2>
+
+            <p>Ensure that you have the following installed on your operating system:</p>
+
+            <ul>
+                <li><strong>Node.js</strong>: <code>v20.19+</code>, <code>v22.12+</code>, or <code>v24.x</code> (Recommended: Node.js 22 LTS or Node.js 24)</li>
+                <li><strong>npm</strong>: <code>v10.x</code> or <code>v11.x</code></li>
+                <li><strong>Git</strong>: for source control and cloning</li>
+            </ul>
+
+            <p>Verify your Node and npm versions in your terminal:</p>
+
+            <pre><code>node -v
+npm -v</code></pre>
+        </section>
+
+        <section id="clone">
+            <h2>1. Clone Repository</h2>
+
+            <p>Clone the repository from GitHub to your local machine:</p>
+
+            <pre><code>git clone https://github.com/dinesh-veer/Angular-Integration-With-Rest.git
+cd Angular-Integration-With-Rest</code></pre>
+        </section>
+
+        <section id="install">
+            <h2>2. Install Dependencies</h2>
+
+            <p>Install the required npm packages:</p>
+
+            <pre><code>npm install</code></pre>
+
+            <p>This installs Angular 21, TypeScript 5.9, RxJS 7.8, Zone.js, and Vitest for testing.</p>
+        </section>
+
+        <section id="dev-server">
+            <h2>3. Development Server</h2>
+
+            <p>To run the development server with live reload:</p>
+
+            <pre><code>npm start</code></pre>
+
+            <p>
+                Alternatively, if you have Angular CLI installed globally, you can run:
+            </p>
+
+            <pre><code>ng serve</code></pre>
+
+            <p>
+                Open your browser and navigate to:
+            </p>
+
+            <pre><code>http://localhost:4200/</code></pre>
+
+            <p>The application will automatically detect changes to source files and refresh the browser.</p>
+        </section>
+
+        <section id="build">
+            <h2>4. Production Build</h2>
+
+            <p>To compile the project for production deployment:</p>
+
+            <pre><code>npm run build</code></pre>
+
+            <p>
+                The compiled static assets (HTML, CSS, JavaScript bundles) are output to:
+            </p>
+
+            <pre><code>dist/hello-angular/browser</code></pre>
+
+            <p>
+                The modern <code>@angular/build:application</code> builder automatically optimizes chunks,
+                extracts CSS, treeshakes unused code, and creates hash-versioned assets.
+            </p>
+        </section>
+
+        <section id="preview">
+            <h2>5. Preview Production Build</h2>
+
+            <p>You can test the static production build locally using any HTTP server:</p>
+
+            <pre><code>npx serve dist/hello-angular/browser</code></pre>
+
+            <p>Or with Python:</p>
+
+            <pre><code>python3 -m http.server 8080 --directory dist/hello-angular/browser</code></pre>
+        </section>
+
+        <section id="tests">
+            <h2>6. Run Unit Tests</h2>
+
+            <p>Run the automated unit test suite using Vitest:</p>
+
+            <pre><code>npm test</code></pre>
+
+            <p>
+                All tests for <code>AppComponent</code> and <code>AppServiceService</code> will execute
+                in headless JSDOM mode and report status in the terminal.
+            </p>
+        </section>
+
+    </main>
+
+</div>
+
+<footer class="site-footer">
+
+    <div class="footer-content">
+
+        <div class="footer-brand">
+            <h3>Angular REST Integration</h3>
+            <p>
+                A modern Angular 21 project demonstrating REST API integration,
+                reactive RxJS observables, and standalone architecture.
+            </p>
+        </div>
+
+        <div class="footer-links">
+
+            <div>
+                <h4>Documentation</h4>
+
+                <a href="index.html">Home</a>
+                <a href="getting-started.html">Getting Started</a>
+                <a href="architecture.html">Architecture</a>
+                <a href="rest-service.html">REST Service</a>
+                <a href="configuration.html">Configuration</a>
+                <a href="testing.html">Testing</a>
+            </div>
+
+            <div>
+                <h4>Repository</h4>
+
+                <a href="https://github.com/dinesh-veer/Angular-Integration-With-Rest"
+                   target="_blank"
+                   rel="noopener noreferrer">
+                    GitHub
+                </a>
+                <a href="https://github.com/dinesh-veer/Angular-Integration-With-Rest/issues"
+                   target="_blank"
+                   rel="noopener noreferrer">
+                    Issues
+                </a>
+                <a href="https://github.com/dinesh-veer/Angular-Integration-With-Rest/pulls"
+                   target="_blank"
+                   rel="noopener noreferrer">
+                    Pull Requests
+                </a>
+                <a href="https://github.com/dinesh-veer/Angular-Integration-With-Rest/stargazers"
+                   target="_blank"
+                   rel="noopener noreferrer">
+                    Stargazers
+                </a>
+            </div>
+
+            <div>
+                <h4>Author</h4>
+
+                <a href="https://github.com/dinesh-veer"
+                   target="_blank"
+                   rel="noopener noreferrer">
+                    Dinesh Veer
+                </a>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="footer-bottom">
+
+        <p>
+            © 2026 Dinesh Veer. All rights reserved.
+        </p>
+
+        <p>
+            Built with Angular 21 &amp; TypeScript.
+        </p>
+
+    </div>
+
+</footer>
+
+<script src="js/script.js"></script>
+
+</body>
+</html>
+

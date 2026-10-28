@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { of } from 'rxjs';
+import { of, NEVER } from 'rxjs';
 import { AppComponent } from './app.component';
 import { AppServiceService } from './app-service.service';
 
@@ -39,6 +39,20 @@ describe('AppComponent', () => {
     await fixture.whenStable();
     const compiled = fixture.nativeElement as HTMLElement;
     expect(compiled.querySelector('h1')?.textContent).toContain('Blog Posts');
+  });
+
+  it('should render loading spinner when restItems is undefined', () => {
+    TestBed.resetTestingModule();
+    TestBed.configureTestingModule({
+      imports: [AppComponent],
+      providers: [
+        { provide: AppServiceService, useValue: { getAll: () => NEVER } }
+      ]
+    });
+    const fixture = TestBed.createComponent(AppComponent);
+    fixture.detectChanges();
+    const compiled = fixture.nativeElement as HTMLElement;
+    expect(compiled.querySelector('.spinner')).toBeTruthy();
   });
 
   it('should display posts returned by service', async () => {

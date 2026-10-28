@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>REST Service - Angular REST Integration</title>
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+<header class="topbar">
+    <div class="brand">
+        Angular REST Integration
+    </div>
+
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="getting-started.html">Getting Started</a>
+        <a href="architecture.html">Architecture</a>
+        <a href="rest-service.html" class="active">REST Service</a>
+        <a href="configuration.html">Configuration</a>
+        <a href="testing.html">Testing</a>
+    </nav>
+</header>
+
+<div class="layout">
+
+    <aside class="sidebar">
+        <h3>REST Service</h3>
+
+        <a href="#service">AppServiceService</a>
+        <a href="#endpoint">REST Endpoint</a>
+        <a href="#payload">Payload Structure</a>
+        <a href="#observable">RxJS Observable</a>
+        <a href="#consumption">Component Usage</a>
+    </aside>
+
+    <main class="content">
+
+        <section class="hero">
+            <h1>REST Service &amp; Integration</h1>
+
+            <p>
+                Learn how <code>AppServiceService</code> queries the WordPress Public REST API
+                using Angular's <code>HttpClient</code> and streams typed responses via RxJS Observables.
+            </p>
+        </section>
+
+        <section id="service">
+            <h2>AppServiceService Implementation</h2>
+
+            <p>
+                The service encapsulates HTTP data access in a dedicated class:
+            </p>
+
+            <pre><code>import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+
+const API_URL = 'https://public-api.wordpress.com/rest/v1.1/sites/vocon-it.com/posts';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class AppServiceService {
+  protected restItemUrl: string = API_URL;
+
+  constructor(private http: HttpClient) {}
+
+  getAll(): Observable&lt;any&gt; {
+    return this.http
+      .get&lt;any&gt;(this.restItemUrl)
+      .pipe(map((data) => data));
+  }
+}</code></pre>
+
+            <p>
+                The <code>@Injectable({ providedIn: 'root' })</code> decorator provides this service at the root level,
+                enabling Angular's dependency injection container to instantiate it as a singleton.
+            </p>
+        </section>
+
+        <section id="endpoint">
+            <h2>REST Endpoint</h2>
+
+            <p>The service connects to the public WordPress REST API v1.1:</p>
+
+            <pre><code>GET https://public-api.wordpress.com/rest/v1.1/sites/vocon-it.com/posts</code></pre>
+
+            <p>
+                This endpoint returns recent blog articles published on <code>vocon-it.com</code> in JSON format.
+                No authentication header is required, making it an ideal live test target for REST integration.
+            </p>
+        </section>
+
+        <section id="payload">
+            <h2>Payload Structure</h2>
+
+            <p>A typical response payload returned by the endpoint:</p>
+
+            <pre><code>{
+  "found": 148,
+  "posts": [
+    {
+      "ID": 7108,
+      "title": "Enable User Namespaces in Kubernetes &#8212; security...",
+      "content": "&lt;p&gt;User namespaces are a Linux kernel feature that isolates user and group IDs...&lt;/p&gt;",
+      "date": "2025-05-07T11:50:43+00:00",
+      "author": {
+        "name": "Oliver Veits"
+      }
+    }
+  ]
+}</code></pre>
+        </section>
+
+        <section id="observable">
+            <h2>RxJS Observable vs. Promises</h2>
+
+            <p>
+                Angular's <code>HttpClient</code> returns cold RxJS <code>Observable</code> instances instead of standard JavaScript Promises:
+            </p>
+
+            <ul>
+                <li><strong>Lazy Execution</strong>: HTTP requests are not dispatched until <code>.subscribe()</code> is called.</li>
+                <li><strong>Cancellable</strong>: Unsubscribing cancels the in-flight XHR/fetch request immediately.</li>
+                <li><strong>Composability</strong>: RxJS operators such as <code>map()</code>, <code>catchError()</code>, <code>retry()</code>, and <code>debounceTime()</code> can transform the stream declaratively.</li>
+            </ul>
+        </section>
+
+        <section id="consumption">
+            <h2>Component Usage</h2>
+
+            <p>
+                The <code>AppComponent</code> injects the service and subscribes to the stream:
+            </p>
+
+            <pre><code>export class AppComponent implements OnInit {
+  title = 'Hello-Angular';
+  restItems: any;
+  selectedContent = '';
+
+  constructor(
+    private appService: AppServiceService,
+    private cdr: ChangeDetectorRef
+  ) {}
+
+  ngOnInit(): void {
+    this.getRestItems();
+  }
+
+  getRestItems(): void {
+    this.appService.getAll().subscribe({
+      next: (restItems) => {
+        this.restItems = restItems;
+        this.cdr.markForCheck();
+      },
+      error: (err) => {
+        console.error('Failed to load blog posts:', err);
+      }
+    });
+  }
+}</code></pre>
+        </section>
+
+    </main>
+
+</div>
+
+<footer class="site-footer">
+
+    <div class="footer-content">
+
+        <div class="footer-brand">
+            <h3>Angular REST Integration</h3>
+            <p>
+                A modern Angular 21 project demonstrating REST API integration,
+                reactive RxJS observables, and standalone architecture.
+            </p>
+        </div>
+
+        <div class="footer-links">
+
+            <div>
+                <h4>Documentation</h4>
+
+                <a href="index.html">Home</a>
+                <a href="getting-started.html">Getting Started</a>
+                <a href="architecture.html">Architecture</a>
+                <a href="rest-service.html">REST Service</a>
+                <a href="configuration.html">Configuration</a>
+                <a href="testing.html">Testing</a>
+            </div>
+
+            <div>
+                <h4>Repository</h4>
+
+                <a href="https://github.com/dinesh-veer/Angular-Integration-With-Rest"
+                   target="_blank"
+                   rel="noopener noreferrer">
+                    GitHub
+                </a>
+                <a href="https://github.com/dinesh-veer/Angular-Integration-With-Rest/issues"
+                   target="_blank"
+                   rel="noopener noreferrer">
+                    Issues
+                </a>
+                <a href="https://github.com/dinesh-veer/Angular-Integration-With-Rest/pulls"
+                   target="_blank"
+                   rel="noopener noreferrer">
+                    Pull Requests
+                </a>
+                <a href="https://github.com/dinesh-veer/Angular-Integration-With-Rest/stargazers"
+                   target="_blank"
+                   rel="noopener noreferrer">
+                    Stargazers
+                </a>
+            </div>
+
+            <div>
+                <h4>Author</h4>
+
+                <a href="https://github.com/dinesh-veer"
+                   target="_blank"
+                   rel="noopener noreferrer">
+                    Dinesh Veer
+                </a>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="footer-bottom">
+
+        <p>
+            © 2026 Dinesh Veer. All rights reserved.
+        </p>
+
+        <p>
+            Built with Angular 21 &amp; TypeScript.
+        </p>
+
+    </div>
+
+</footer>
+
+<script src="js/script.js"></script>
+
+</body>
+</html>
+

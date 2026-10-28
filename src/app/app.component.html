@@ -1,7 +1,12 @@
 <div>
   <h1>Blog Posts</h1>
-  <div *ngIf="undefined===restItems">Loading .......</div>
-  <div *ngIf="undefined !=restItems">
+  
+  <div *ngIf="undefined === restItems" class="loading-container">
+    <div class="spinner" role="status" aria-label="Loading"></div>
+    <p class="loading-text">Loading...</p>
+  </div>
+
+  <div *ngIf="undefined != restItems">
     <ul>
         <li *ngFor="let post of restItems['posts']" [innerHTML]="post.title"
         (click)="selectedContent ='<h1>' +post.title+'</h1>'+ post.content "

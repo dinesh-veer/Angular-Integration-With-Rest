@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Angular REST Integration - Documentation</title>
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+<header class="topbar">
+    <div class="brand">
+        Angular REST Integration
+    </div>
+
+    <nav>
+        <a href="index.html" class="active">Home</a>
+        <a href="getting-started.html">Getting Started</a>
+        <a href="architecture.html">Architecture</a>
+        <a href="rest-service.html">REST Service</a>
+        <a href="configuration.html">Configuration</a>
+        <a href="testing.html">Testing</a>
+    </nav>
+</header>
+
+<div class="layout">
+
+    <aside class="sidebar">
+        <h3>Angular REST Integration</h3>
+
+        <a href="#overview">Overview</a>
+        <a href="#features">Features</a>
+        <a href="#technology">Technology Stack</a>
+        <a href="#flow">Data Flow</a>
+        <a href="#screenshots">Screenshots</a>
+        <a href="#structure">Project Structure</a>
+        <a href="#repository">Repository</a>
+    </aside>
+
+    <main class="content">
+
+        <section class="hero">
+            <h1>Angular Integration with REST Services</h1>
+
+            <p>
+                A modern Angular 21 application demonstrating external REST API
+                consumption, reactive data streaming with RxJS, and standalone component architecture.
+            </p>
+
+            <div class="buttons">
+                <a class="button primary"
+                   href="getting-started.html">
+                    Get Started
+                </a>
+
+                <a class="button"
+                   href="https://github.com/dinesh-veer/Angular-Integration-With-Rest"
+                   target="_blank"
+                   rel="noopener noreferrer">
+                    GitHub Repository
+                </a>
+            </div>
+        </section>
+
+        <section id="overview">
+            <h2>Overview</h2>
+
+            <p>
+                <strong>Angular-Integration-With-Rest</strong> is a clean, modern Angular application
+                demonstrating how to interact with external REST APIs using Angular's <code>HttpClient</code>,
+                manage asynchronous reactive streams via <code>Observable</code> pipelines, and render dynamic
+                interactive content.
+            </p>
+
+            <p>
+                The application connects to a public WordPress REST endpoint, fetches live blog articles,
+                displays an interactive list of article titles, and updates the view dynamically with the selected
+                article's full HTML content when clicked.
+            </p>
+        </section>
+
+        <section id="features">
+            <h2>Features</h2>
+
+            <div class="cards">
+
+                <div class="card">
+                    <h3>REST API Client</h3>
+                    <p>
+                        Uses Angular's modern <code>provideHttpClient()</code> and <code>HttpClient</code> to fetch
+                        remote JSON payloads cleanly.
+                    </p>
+                </div>
+
+                <div class="card">
+                    <h3>Standalone Architecture</h3>
+                    <p>
+                        Built with Angular's standalone components, eliminating the need for legacy <code>NgModule</code> boilerplate.
+                    </p>
+                </div>
+
+                <div class="card">
+                    <h3>Reactive RxJS Streams</h3>
+                    <p>
+                        Processes HTTP responses asynchronously using Observables, operators (<code>map</code>), and typed data flow.
+                    </p>
+                </div>
+
+                <div class="card">
+                    <h3>Vitest Testing</h3>
+                    <p>
+                        Fast unit testing with Vitest and JSDOM, using <code>HttpTestingController</code> for mock HTTP verification.
+                    </p>
+                </div>
+
+            </div>
+        </section>
+
+        <section id="technology">
+            <h2>Technology Stack</h2>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Technology</th>
+                        <th>Version</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Angular</strong></td>
+                        <td>v21.2.x</td>
+                        <td>Web application framework (Standalone architecture)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>TypeScript</strong></td>
+                        <td>v5.9.x</td>
+                        <td>Strictly-typed JavaScript superset</td>
+                    </tr>
+                    <tr>
+                        <td><strong>RxJS</strong></td>
+                        <td>v7.8.x</td>
+                        <td>Reactive Extensions library for async stream composition</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Zone.js</strong></td>
+                        <td>v0.15+</td>
+                        <td>Execution context & automated change detection</td>
+                    </tr>
+                    <tr>
+                        <td><strong>@angular/build</strong></td>
+                        <td>v21.2.x</td>
+                        <td>Vite-powered application bundler and dev server</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Vitest & JSDOM</strong></td>
+                        <td>v4.x / v28.x</td>
+                        <td>Next-generation fast unit test runner and DOM environment</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Node.js & npm</strong></td>
+                        <td>v20+ / v22+ / v24+ & npm 11+</td>
+                        <td>JavaScript runtime and package management</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section id="flow">
+            <h2>Data Flow</h2>
+
+            <p>
+                The application handles asynchronous REST data flow through decoupled service and component layers:
+            </p>
+
+            <div class="flow">
+                <div class="flow-box">WordPress REST API</div>
+                <div class="arrow">→</div>
+                <div class="flow-box">HttpClient.get()</div>
+                <div class="arrow">→</div>
+                <div class="flow-box">AppServiceService</div>
+                <div class="arrow">→</div>
+                <div class="flow-box">AppComponent</div>
+                <div class="arrow">→</div>
+                <div class="flow-box">DOM View</div>
+            </div>
+        </section>
+
+        <section id="screenshots">
+            <h2>Application Screenshots</h2>
+
+            <p>
+                Below are screenshots of the running application displaying the initial loading state and the dynamic blog post view:
+            </p>
+
+            <h3>1. Initial Loading State</h3>
+            <p>The application renders a loading notification while the asynchronous HTTP request is in-flight:</p>
+            <img src="images/Blogs%20image%20loading.png" alt="Blogs loading state" class="doc-image">
+
+            <h3>2. Dynamic Blog Post Loaded & Interactive Viewer</h3>
+            <p>Once the response arrives, the blog list is populated. Clicking any post displays the complete HTML content:</p>
+            <img src="images/Blog%20post%20loaded%20image.png" alt="Blog post loaded and selected" class="doc-image">
+        </section>
+
+        <section id="structure">
+            <h2>Project Structure</h2>
+
+            <pre><code>Angular-Integration-With-Rest
+│
+├── public
+│   └── favicon.ico                   # Static application favicon
+│
+├── src
+│   ├── app
+│   │   ├── app.component.css         # Root component styles
+│   │   ├── app.component.html        # Interactive post list & reader view
+│   │   ├── app.component.spec.ts     # Component unit tests (Vitest)
+│   │   ├── app.component.ts          # Standalone root component
+│   │   ├── app.config.ts             # App providers (HttpClient & Zone.js)
+│   │   ├── app-service.service.ts    # REST API client service
+│   │   └── app-service.service.spec.ts # Service unit tests with HttpTestingController
+│   │
+│   ├── index.html                    # Root HTML document
+│   ├── main.ts                       # Entry point (bootstrapApplication)
+│   └── styles.css                    # Global application styles
+│
+├── angular.json                      # Angular CLI workspace & builder config
+├── package.json                      # Project dependencies & scripts
+├── tsconfig.json                     # Root TypeScript configuration
+├── tsconfig.app.json                 # Application compilation config
+├── tsconfig.spec.json                # Test suite compilation config
+└── README.md</code></pre>
+        </section>
+
+        <section id="repository">
+            <h2>Repository</h2>
+
+            <p>
+                The complete source code is available on GitHub:
+            </p>
+
+            <p>
+                <a class="button primary"
+                   href="https://github.com/dinesh-veer/Angular-Integration-With-Rest"
+                   target="_blank"
+                   rel="noopener noreferrer">
+                    View on GitHub
+                </a>
+            </p>
+        </section>
+
+    </main>
+
+</div>
+
+<footer class="site-footer">
+
+    <div class="footer-content">
+
+        <div class="footer-brand">
+            <h3>Angular REST Integration</h3>
+            <p>
+                A modern Angular 21 project demonstrating REST API integration,
+                reactive RxJS observables, and standalone architecture.
+            </p>
+        </div>
+
+        <div class="footer-links">
+
+            <div>
+                <h4>Documentation</h4>
+
+                <a href="index.html">Home</a>
+                <a href="getting-started.html">Getting Started</a>
+                <a href="architecture.html">Architecture</a>
+                <a href="rest-service.html">REST Service</a>
+                <a href="configuration.html">Configuration</a>
+                <a href="testing.html">Testing</a>
+            </div>
+
+            <div>
+                <h4>Repository</h4>
+
+                <a href="https://github.com/dinesh-veer/Angular-Integration-With-Rest"
+                   target="_blank"
+                   rel="noopener noreferrer">
+                    GitHub
+                </a>
+                <a href="https://github.com/dinesh-veer/Angular-Integration-With-Rest/issues"
+                   target="_blank"
+                   rel="noopener noreferrer">
+                    Issues
+                </a>
+                <a href="https://github.com/dinesh-veer/Angular-Integration-With-Rest/pulls"
+                   target="_blank"
+                   rel="noopener noreferrer">
+                    Pull Requests
+                </a>
+                <a href="https://github.com/dinesh-veer/Angular-Integration-With-Rest/stargazers"
+                   target="_blank"
+                   rel="noopener noreferrer">
+                    Stargazers
+                </a>
+            </div>
+
+            <div>
+                <h4>Author</h4>
+
+                <a href="https://github.com/dinesh-veer"
+                   target="_blank"
+                   rel="noopener noreferrer">
+                    Dinesh Veer
+                </a>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="footer-bottom">
+
+        <p>
+            © 2026 Dinesh Veer. All rights reserved.
+        </p>
+
+        <p>
+            Built with Angular 21 &amp; TypeScript.
+        </p>
+
+    </div>
+
+</footer>
+
+<script src="js/script.js"></script>
+
+</body>
+</html>
+
